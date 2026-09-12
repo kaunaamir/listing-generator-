@@ -7,80 +7,40 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #F6F4EF;
-    color: #1E2430;
-  }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px; }
+  body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background:#F6F4EF; color:#1E2430; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px 20px; }
   h1 { font-size: 28px; margin: 0 0 4px; }
-  .sub { color: #5B6472; margin: 0 0 28px; font-size: 15px; }
-  .card {
-    background: #fff;
-    border: 1px solid #E3DFD3;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 18px;
-  }
-  .card h2 { font-size: 17px; margin: 0 0 6px; }
-  .card p.hint { color: #5B6472; font-size: 13px; margin: 0 0 14px; }
-  .dropzone {
-    border: 2px dashed #C7C2B6;
-    border-radius: 10px;
-    padding: 50px 20px;
-    text-align: center;
-    cursor: pointer;
-    background: #fff;
-  }
-  .dropzone:hover { border-color: #2F6F5E; }
-  .dropzone p { margin: 6px 0 0; color: #8B8578; font-size: 14px; }
-  .dropzone p.big { color: #1E2430; font-size: 16px; font-weight: 500; }
-  label { display: block; font-size: 13px; color: #5B6472; margin-bottom: 4px; }
+  .sub { color:#5B6472; margin:0 0 28px; font-size:15px; }
+  .card { background:#fff; border:1px solid #E3DFD3; border-radius:10px; padding:20px; margin-bottom:18px; }
+  .card h2 { font-size:17px; margin:0 0 6px; }
+  .card p.hint { color:#5B6472; font-size:13px; margin:0 0 14px; }
+  .dropzone { border:2px dashed #C7C2B6; border-radius:10px; padding:50px 20px; text-align:center; cursor:pointer; background:#fff; }
+  .dropzone:hover { border-color:#2F6F5E; }
+  .dropzone p { margin:6px 0 0; color:#8B8578; font-size:14px; }
+  .dropzone p.big { color:#1E2430; font-size:16px; font-weight:500; }
+  label { display:block; font-size:13px; color:#5B6472; margin-bottom:4px; }
   input[type=text], input[type=number], select, textarea {
-    width: 100%;
-    padding: 9px 11px;
-    border: 1px solid #D8D3C6;
-    border-radius: 6px;
-    font-size: 14px;
-    margin-bottom: 14px;
-    font-family: inherit;
+    width:100%; padding:9px 11px; border:1px solid #D8D3C6; border-radius:6px; font-size:14px; margin-bottom:14px; font-family:inherit;
   }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
-  button.primary {
-    background: #2F6F5E;
-    color: #fff;
-    border: none;
-    padding: 12px 22px;
-    border-radius: 7px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-  }
-  button.primary:disabled { background: #A9B8B3; cursor: not-allowed; }
-  button.secondary {
-    background: #EDEAE0;
-    border: none;
-    padding: 9px 14px;
-    border-radius: 6px;
-    font-size: 13px;
-    cursor: pointer;
-    margin-bottom: 14px;
-  }
-  .row-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
-  .link-btn { background: none; border: none; color: #5B6472; font-size: 14px; cursor: pointer; }
-  .banner {
-    padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-bottom: 18px;
-  }
-  .banner.warn { background: #FBF3E3; border: 1px solid #E9D3A0; color: #7A5A1E; }
-  .banner.err { background: #FBEAEA; border: 1px solid #E5B4B4; color: #7A2E2E; }
-  .stat { text-align: center; }
-  .stat .n { font-size: 20px; font-weight: 600; }
-  .stat .l { font-size: 12px; color: #8B8578; }
-  .stats-row { display: flex; gap: 20px; margin-bottom: 4px; }
-  #spinner { display: none; text-align: center; padding: 60px 0; color: #5B6472; }
-  .hidden { display: none !important; }
-  footer { text-align: center; color: #B7B2A4; font-size: 12px; margin-top: 30px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:0 16px; }
+  button.primary { background:#2F6F5E; color:#fff; border:none; padding:12px 22px; border-radius:7px; font-size:15px; font-weight:500; cursor:pointer; }
+  button.primary:disabled { background:#A9B8B3; cursor:not-allowed; }
+  button.secondary { background:#EDEAE0; border:none; padding:9px 14px; border-radius:6px; font-size:13px; cursor:pointer; margin-bottom:14px; }
+  .row-actions { display:flex; justify-content:space-between; align-items:center; margin-top:20px; }
+  .link-btn { background:none; border:none; color:#5B6472; font-size:14px; cursor:pointer; }
+  .banner { padding:12px 16px; border-radius:8px; font-size:14px; margin-bottom:18px; }
+  .banner.warn { background:#FBF3E3; border:1px solid #E9D3A0; color:#7A5A1E; }
+  .banner.err { background:#FBEAEA; border:1px solid #E5B4B4; color:#7A2E2E; }
+  .banner.ok { background:#EAF5EE; border:1px solid #B7DCC3; color:#2A5E3D; }
+  .stat { text-align:center; }
+  .stat .n { font-size:20px; font-weight:600; }
+  .stat .l { font-size:12px; color:#8B8578; }
+  .stats-row { display:flex; gap:20px; margin-bottom:4px; }
+  #spinner { display:none; text-align:center; padding:60px 0; color:#5B6472; }
+  .hidden { display:none !important; }
+  .field-err { color:#C75B5B; font-size:12px; margin:-10px 0 12px; }
+  footer { text-align:center; color:#B7B2A4; font-size:12px; margin-top:30px; padding-bottom: 10px; }
+  .save-defaults-row { display:flex; align-items:center; gap:8px; font-size:13px; color:#5B6472; margin-top:6px; }
 </style>
 </head>
 <body>
@@ -96,10 +56,10 @@
       <p>.xls or .xlsx</p>
       <input type="file" id="fileInput" accept=".xls,.xlsx" style="display:none" />
     </div>
+    <div id="savedDefaultsNote" class="banner ok hidden" style="margin-top:16px;"></div>
   </div>
 
   <div id="formStep" class="hidden"></div>
-
   <div id="spinner">Writing description and keywords…</div>
 
   <div id="doneStep" class="hidden">
@@ -110,34 +70,75 @@
     </div>
   </div>
 
-  <footer>Runs entirely on this device — nothing is stored on a server.</footer>
+  <footer>Runs entirely on this device — nothing leaves your browser except the description/keyword request.<br/>Made by Aamir.</footer>
 </div>
 
 <script>
 /* ---------------- template knowledge ---------------- */
 const HELPER_SHEETS = new Set(["Summary Sheet","Index","Listing FAQ Sheet","Image GuideLines","MatchingAttributes","VariantAttributes","Parent Variant Products","template_version"]);
 
+// Each canonical field maps to substrings we look for INSIDE the header text
+// (not exact match) - real Flipkart templates append units/currency like
+// "MRP (INR)" or reword things as "Your selling price (INR)", so exact
+// matching was silently missing real columns.
 const FIELD_SYNONYMS = {
-  sellerSku: ["seller sku id"], qcReason: ["qc failed reason (if any)"], groupId: ["group id"],
-  listingStatus: ["listing status"], mrp: ["mrp"], sellingPrice: ["selling price"],
-  fulfilmentBy: ["fulfilment by","fulfillment by"], procurementType: ["procurement type"],
-  procurementSla: ["procurement sla","procurement sla (day)","procurement sla(days)"],
-  stock: ["stock"], shippingProvider: ["shipping provider"], length: ["length"], breadth: ["breadth"],
-  height: ["height"], weight: ["weight"], hsn: ["hsn"], luxuryCess: ["luxury cess"],
-  countryOfOrigin: ["country of origin"], manufacturer: ["manufacturer details"], packer: ["packer details"],
-  importer: ["importer details"], taxCode: ["tax code"], minOQ: ["minoq","min order quantity"],
-  brand: ["brand"], idealFor: ["ideal for"], fabric: ["fabric","brand fabric"], brandSize: ["brand size"],
-  brandSizeUnit: ["brand size - measuring unit"], styleCode: ["style code"], color: ["color"],
-  brandColor: ["brand color"], mainImage: ["main image url"], fit: ["fit"],
-  pattern: ["pattern","pattern/print type"], fly: ["fly"], fabricCare: ["fabric care"],
-  itemsIncluded: ["items included"], occasion: ["occasion"], description: ["description"],
-  searchKeywords: ["search keywords"], keyFeatures: ["key features"],
+  sellerSku: ["seller sku id"],
+  qcReason: ["qc failed reason"],
+  groupId: ["group id"],
+  listingStatus: ["listing status"],
+  mrp: ["mrp"],
+  sellingPrice: ["selling price"],
+  fulfilmentBy: ["fulfilment by", "fulfillment by", "fullfilment by"],
+  procurementType: ["procurement type"],
+  procurementSla: ["procurement sla"],
+  stock: ["stock"],
+  shippingProvider: ["shipping provider"],
+  length: ["length"],
+  breadth: ["breadth"],
+  height: ["height"],
+  weight: ["weight"],
+  hsn: ["hsn"],
+  luxuryCess: ["luxury cess"],
+  countryOfOrigin: ["country of origin"],
+  manufacturer: ["manufacturer details"],
+  packer: ["packer details"],
+  importer: ["importer details"],
+  taxCode: ["tax code"],
+  minOQ: ["minoq", "min order quantity", "minimum order quantity"],
+  brand: ["brand"],
+  idealFor: ["ideal for"],
+  fabric: ["fabric"],
+  brandSize: ["brand size"],
+  brandSizeUnit: ["brand size - measuring unit", "brand size measuring unit"],
+  styleCode: ["style code"],
+  color: ["color"],
+  brandColor: ["brand color"],
+  mainImage: ["main image url"],
+  fit: ["fit"],
+  pattern: ["pattern"],
+  fly: ["fly"],
+  fabricCare: ["fabric care"],
+  itemsIncluded: ["items included"],
+  occasion: ["occasion"],
+  description: ["description"],
+  searchKeywords: ["search keywords"],
+  keyFeatures: ["key features"],
 };
+// order matters: check "brand size - measuring unit" before "brand size" etc.
+const FIELD_MATCH_ORDER = ["sellerSku","qcReason","groupId","listingStatus","mrp","sellingPrice",
+  "fulfilmentBy","procurementType","procurementSla","stock","shippingProvider","length","breadth",
+  "height","weight","hsn","luxuryCess","countryOfOrigin","manufacturer","packer","importer","taxCode",
+  "minOQ","brand","idealFor","fabricCare","fabric","brandSizeUnit","brandSize","styleCode","brandColor",
+  "color","mainImage","fit","pattern","fly","itemsIncluded","occasion","description","searchKeywords","keyFeatures"];
 
 const BATCH_FIELD_ORDER = ["brand","mrp","sellingPrice","fabric","idealFor","fit","pattern","color","brandColor",
   "countryOfOrigin","manufacturer","packer","hsn","taxCode","fabricCare","itemsIncluded","occasion",
   "length","breadth","height","weight","luxuryCess","minOQ","procurementSla","listingStatus","fulfilmentBy",
   "procurementType","shippingProvider"];
+
+// fields we DEMAND a value for before allowing download - a silent gap here
+// is how the last version shipped a file with blank MRP/price/dimensions.
+const HARD_REQUIRED = ["brand","mrp","sellingPrice","length","breadth","height","weight"];
 
 const FIELD_LABELS = {
   brand:"Brand name", mrp:"MRP (₹)", sellingPrice:"Selling price (₹)", fabric:"Fabric", idealFor:"Ideal for",
@@ -154,6 +155,10 @@ const FIELD_DEFAULTS = { countryOfOrigin:"India", taxCode:"GST_APPAREL", listing
   fulfilmentBy:"Seller", procurementType:"instock", shippingProvider:"Flipkart", procurementSla:"1",
   luxuryCess:"0", minOQ:"1", itemsIncluded:"1" };
 
+// Fields eligible to be remembered as "usual values" across sessions.
+const SAVEABLE_FIELDS = ["brand","manufacturer","packer","countryOfOrigin","taxCode","fabricCare",
+  "length","breadth","height","weight","procurementSla","listingStatus","fulfilmentBy","procurementType","shippingProvider"];
+
 const FALLBACK_OPTIONS = {
   countryOfOrigin:["India"], taxCode:["GST_APPAREL","GST_5","GST_12","GST_18","GST_28","GST_NIL"],
   listingStatus:["Active","Inactive"], fulfilmentBy:["Seller"], procurementType:["instock","express"],
@@ -168,16 +173,30 @@ const FALLBACK_OPTIONS = {
 const DROPDOWN_FIELDS = new Set(["fabric","idealFor","fit","pattern","color","countryOfOrigin","taxCode","listingStatus","fulfilmentBy","procurementType","shippingProvider"]);
 const NUMERIC_FIELDS = new Set(["mrp","sellingPrice","length","breadth","height","weight","luxuryCess","minOQ","procurementSla"]);
 
-function norm(s){ return String(s||"").trim().toLowerCase(); }
+function norm(s){ return String(s||"").trim().toLowerCase().replace(/\s+/g," "); }
 
-/* ---------------- state ---------------- */
-let workbook = null, analysis = null, fileName = "";
-let formValues = {}, stockValues = {}, aiContent = null;
-let regenerateStyle = false, stylePrefix = "STY", forceContent = false;
+/* ---------------- saved defaults (this browser only) ---------------- */
+const DEFAULTS_KEY = "flipkart_filler_saved_defaults_v1";
+function loadSavedDefaults(){
+  try { return JSON.parse(window.localStorage.getItem(DEFAULTS_KEY) || "{}"); }
+  catch(e){ return {}; }
+}
+function saveSavedDefaults(values){
+  const toSave = {};
+  SAVEABLE_FIELDS.forEach(k=>{ if(values[k]) toSave[k]=values[k]; });
+  try { window.localStorage.setItem(DEFAULTS_KEY, JSON.stringify(toSave)); } catch(e){}
+}
 
 /* ---------------- parsing ---------------- */
 function detectMainSheet(wb){
   return wb.SheetNames.find(n => !HELPER_SHEETS.has(n) && !/^DropDownValuesForColumn/i.test(n) && n !== "template_version");
+}
+function matchHeader(normalizedText){
+  for(const key of FIELD_MATCH_ORDER){
+    const syns = FIELD_SYNONYMS[key];
+    if(syns.some(s => normalizedText.includes(s))) return key;
+  }
+  return null;
 }
 function buildHeaderMap(ws){
   const range = XLSX.utils.decode_range(ws['!ref']);
@@ -189,9 +208,8 @@ function buildHeaderMap(ws){
   const canonicalToCol = {};
   Object.entries(headers).forEach(([colStr,text])=>{
     const col = Number(colStr); const n = norm(text);
-    Object.entries(FIELD_SYNONYMS).forEach(([key,syns])=>{
-      if(canonicalToCol[key]===undefined && syns.includes(n)) canonicalToCol[key]=col;
-    });
+    const key = matchHeader(n);
+    if(key && canonicalToCol[key]===undefined) canonicalToCol[key]=col;
   });
   return { headers, canonicalToCol, range };
 }
@@ -205,7 +223,7 @@ function parseIndexOptions(wb){
     const label = norm(getCellVal(ws,labelRow,c)); if(!label) continue;
     const values = [];
     for(let r=labelRow+2;r<=range.e.r;r++){
-      const v = getCellVal(ws,r,c); if(v==="" || v===undefined) break; values.push(String(v));
+      const v = getCellVal(ws,r,c); if(v===""||v===undefined) break; values.push(String(v));
     }
     if(values.length && !options[label]) options[label]=values;
   }
@@ -216,10 +234,18 @@ function extractRows(ws, canonicalToCol){
   const range = XLSX.utils.decode_range(ws['!ref']); const rows = [];
   for(let r=range.s.r+1;r<=range.e.r;r++){
     const sku = getCellVal(ws,r,skuCol);
-    if(sku!=="" && sku!==undefined) rows.push({r, sku:String(sku)});
+    if(sku!==""&&sku!==undefined) rows.push({r, sku:String(sku)});
   }
   return rows;
 }
+// Guess a size from the SKU text itself (e.g. "...-M", "...-XL") as a
+// fallback when Brand Size is blank - used only to pre-fill the per-row
+// size inputs, never written silently without user confirmation.
+function guessSizeFromSku(sku){
+  const m = String(sku).toUpperCase().match(/-(XXXL|XXL|XL|XS|S|M|L)$/);
+  return m ? m[1] : "";
+}
+
 function analyzeWorkbook(wb){
   const sheetName = detectMainSheet(wb);
   if(!sheetName) throw new Error("Could not find the product data sheet in this file.");
@@ -248,6 +274,7 @@ function analyzeWorkbook(wb){
   const hasStockCol = canonicalToCol.stock!==undefined;
   const stockRowsNeeded = hasStockCol ? rows.filter(({r})=>{ const v=getCellVal(ws,r,canonicalToCol.stock); return v===""||v===undefined; }) : [];
   const hasStyleCodeCol = canonicalToCol.styleCode!==undefined;
+  const hasBrandSizeCol = canonicalToCol.brandSize!==undefined;
 
   const contentColsPresent = {
     description: canonicalToCol.description!==undefined,
@@ -259,13 +286,22 @@ function analyzeWorkbook(wb){
     return rows.every(({r})=>{ const v=getCellVal(ws,r,col); return v!==""&&v!==undefined; });
   });
 
-  const rowSizes = rows.map(({r,sku})=>({ r, sku, size: canonicalToCol.brandSize!==undefined ? String(getCellVal(ws,r,canonicalToCol.brandSize)||"") : "" }));
+  // Brand Size: use existing value if present, else guess from SKU, else blank
+  // (blank forces the user to fill it - this is the field that silently
+  // broke a real listing before, so it is never left to chance now).
+  const rowSizes = rows.map(({r,sku})=>{
+    const existing = hasBrandSizeCol ? String(getCellVal(ws,r,canonicalToCol.brandSize)||"") : "";
+    return { r, sku, size: existing || guessSizeFromSku(sku) };
+  });
+  const sizeRowsNeeded = hasBrandSizeCol ? rows.filter(({r})=>{
+    const v = getCellVal(ws,r,canonicalToCol.brandSize); return v===""||v===undefined;
+  }) : [];
 
-  return { sheetName, canonicalToCol, rows, rowSizes, qcIssues, fieldsNeedingInput, hasStockCol, stockRowsNeeded, hasStyleCodeCol, contentColsPresent, contentAllFilled, indexOptions };
+  return { sheetName, canonicalToCol, rows, rowSizes, qcIssues, fieldsNeedingInput, hasStockCol, stockRowsNeeded,
+    hasStyleCodeCol, hasBrandSizeCol, sizeRowsNeeded, contentColsPresent, contentAllFilled, indexOptions };
 }
 function getOptionsFor(key, indexOptions){
-  const fromIndex = indexOptions[key];
-  if(fromIndex && fromIndex.length) return fromIndex;
+  const fromIndex = indexOptions[key]; if(fromIndex && fromIndex.length) return fromIndex;
   return FALLBACK_OPTIONS[key] || null;
 }
 function randomCode(){ return Math.floor(10000+Math.random()*90000).toString(); }
@@ -276,18 +312,30 @@ function makeStyleCode(prefix,size){
 
 /* ---------------- AI call (via our own backend, key hidden) ---------------- */
 async function generateContent(attrs){
-  const resp = await fetch("/api/generate", {
-    method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(attrs)
-  });
+  const resp = await fetch("/api/generate", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(attrs) });
   const data = await resp.json();
   if(!resp.ok) throw new Error(data.error || "AI generation failed");
   return data;
 }
 
+/* ---------------- state ---------------- */
+let workbook=null, analysis=null, fileName="";
+let formValues={}, stockValues={}, sizeValues={}, aiContent=null;
+let regenerateStyle=false, stylePrefix="STY", forceContent=false, rememberDefaults=true;
+
 /* ---------------- UI ---------------- */
 const el = id => document.getElementById(id);
 function showError(msg){ el('errorBanner').textContent = msg; el('errorBanner').classList.remove('hidden'); }
 function clearError(){ el('errorBanner').classList.add('hidden'); }
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  const saved = loadSavedDefaults();
+  if(Object.keys(saved).length){
+    const note = el('savedDefaultsNote');
+    note.textContent = "Using your saved defaults (brand, manufacturer, dimensions, etc.) — you can change them per file.";
+    note.classList.remove('hidden');
+  }
+});
 
 el('dropzone').addEventListener('click', ()=> el('fileInput').click());
 el('dropzone').addEventListener('dragover', e=>e.preventDefault());
@@ -302,8 +350,14 @@ function handleFile(file){
       const data = new Uint8Array(e.target.result);
       workbook = XLSX.read(data, {type:"array"});
       analysis = analyzeWorkbook(workbook);
+      const saved = loadSavedDefaults();
       formValues = {};
-      analysis.fieldsNeedingInput.forEach(k=>{ if(FIELD_DEFAULTS[k]) formValues[k]=FIELD_DEFAULTS[k]; });
+      analysis.fieldsNeedingInput.forEach(k=>{
+        if(saved[k]) formValues[k]=saved[k];
+        else if(FIELD_DEFAULTS[k]) formValues[k]=FIELD_DEFAULTS[k];
+      });
+      sizeValues = {};
+      analysis.rowSizes.forEach(({r,size})=>{ if(size) sizeValues[r]=size; });
       stylePrefix = analysis.sheetName.replace(/[^A-Za-z]/g,"").slice(0,3).toUpperCase() || "STY";
       renderForm();
     }catch(err){ showError(err.message || "Could not read this file."); }
@@ -313,36 +367,43 @@ function handleFile(file){
 
 function renderForm(){
   el('uploadStep').classList.add('hidden');
-  const step = el('formStep');
-  step.classList.remove('hidden');
+  const step = el('formStep'); step.classList.remove('hidden');
 
-  let html = `
-    <div class="card">
-      <div class="stats-row">
-        <div class="stat"><div class="n">${analysis.sheetName}</div><div class="l">category</div></div>
-        <div class="stat"><div class="n">${analysis.rows.length}</div><div class="l">size rows</div></div>
-        <div class="stat"><div class="n">${analysis.fieldsNeedingInput.length}</div><div class="l">fields to fill</div></div>
-        <div class="stat"><div class="n">${analysis.qcIssues.length}</div><div class="l">QC issues</div></div>
-      </div>
-    </div>`;
+  let html = `<div class="card"><div class="stats-row">
+    <div class="stat"><div class="n">${analysis.sheetName}</div><div class="l">category</div></div>
+    <div class="stat"><div class="n">${analysis.rows.length}</div><div class="l">size rows</div></div>
+    <div class="stat"><div class="n">${analysis.fieldsNeedingInput.length}</div><div class="l">fields to fill</div></div>
+    <div class="stat"><div class="n">${analysis.qcIssues.length}</div><div class="l">QC issues</div></div>
+  </div></div>`;
+
+  if(analysis.hasBrandSizeCol && analysis.sizeRowsNeeded.length){
+    html += `<div class="card"><h2>Size per row</h2><p class="hint">Required — Flipkart rejects variants if size isn't set on every row. Guessed from the SKU where possible; please confirm.</p><div class="grid">`;
+    analysis.rows.forEach(({r,sku})=>{
+      html += `<div><label>${sku}</label><input type="text" data-size-row="${r}" value="${sizeValues[r]||''}" oninput="onSizeChange(this)" placeholder="e.g. M"/></div>`;
+    });
+    html += `</div></div>`;
+  }
 
   if(analysis.fieldsNeedingInput.length){
-    html += `<div class="card"><h2>Fill in what's missing</h2><p class="hint">Already-filled cells are left untouched.</p><div class="grid">`;
+    html += `<div class="card"><h2>Fill in what's missing</h2><p class="hint">Already-filled cells are left untouched. Fields marked * are required.</p><div class="grid">`;
     analysis.fieldsNeedingInput.forEach(key=>{
-      const label = FIELD_LABELS[key] || key;
+      const label = FIELD_LABELS[key]||key;
+      const required = HARD_REQUIRED.includes(key);
       const opts = DROPDOWN_FIELDS.has(key) ? getOptionsFor(key, analysis.indexOptions) : null;
-      const val = formValues[key] || "";
+      const val = formValues[key]||"";
       if(opts){
-        html += `<div><label>${label}</label><select data-field="${key}" onchange="onFieldChange(this)">
-          <option value="">Select…</option>
-          ${opts.map(o=>`<option value="${o}" ${o===val?"selected":""}>${o}</option>`).join("")}
+        html += `<div><label>${label}${required?' *':''}</label><select data-field="${key}" onchange="onFieldChange(this)">
+          <option value="">Select…</option>${opts.map(o=>`<option value="${o}" ${o===val?"selected":""}>${o}</option>`).join("")}
         </select></div>`;
       } else {
         const type = NUMERIC_FIELDS.has(key) ? "number" : "text";
-        html += `<div><label>${label}</label><input type="${type}" data-field="${key}" value="${val}" oninput="onFieldChange(this)"/></div>`;
+        html += `<div><label>${label}${required?' *':''}</label><input type="${type}" data-field="${key}" value="${val}" oninput="onFieldChange(this)"/></div>`;
       }
     });
-    html += `</div></div>`;
+    html += `</div>
+      <div class="save-defaults-row"><input type="checkbox" id="rememberDefaults" checked onchange="rememberDefaults=this.checked" style="width:auto;margin:0;"/>
+      <label style="margin:0;" for="rememberDefaults">Remember brand, manufacturer, dimensions etc. on this device for next time</label></div>
+    </div>`;
   }
 
   if(analysis.stockRowsNeeded.length){
@@ -353,7 +414,7 @@ function renderForm(){
       </div><div class="grid">`;
     analysis.stockRowsNeeded.forEach(({r})=>{
       const size = (analysis.rowSizes.find(s=>s.r===r)||{}).size || `row ${r}`;
-      html += `<div><label>${size}</label><input type="number" data-stock-row="${r}" oninput="onStockChange(this)"/></div>`;
+      html += `<div><label>${size}</label><input type="number" data-stock-row="${r}" value="${stockValues[r]||''}" oninput="onStockChange(this)"/></div>`;
     });
     html += `</div></div>`;
   }
@@ -369,19 +430,18 @@ function renderForm(){
   if(hasContentCols){
     html += `<div class="card"><h2>Description & keywords</h2>
       <p class="hint">${analysis.contentAllFilled ? "Already filled in this file." : "Will be written using simple, India-search-style keywords."}</p>`;
-    if(analysis.contentAllFilled){
-      html += `<label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="forceContent" onchange="forceContent=this.checked" style="width:auto;margin:0;"/> Regenerate anyway</label>`;
-    }
+    if(analysis.contentAllFilled) html += `<label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="forceContent" onchange="forceContent=this.checked" style="width:auto;margin:0;"/> Regenerate anyway</label>`;
     html += `</div>`;
   }
 
   if(analysis.qcIssues.length){
-    html += `<div class="banner warn"><strong>Flipkart flagged ${analysis.qcIssues.length} row(s):</strong><ul>`;
-    analysis.qcIssues.forEach(q=>{ html += `<li>${q.sku}: ${(q.reason.split("\\n")[1]||q.reason)}</li>`; });
+    html += `<div class="banner warn"><strong>Flipkart flagged ${analysis.qcIssues.length} row(s) — review after filling:</strong><ul style="margin:6px 0 0;padding-left:18px;">`;
+    analysis.qcIssues.forEach(q=>{ html += `<li>${q.sku}</li>`; });
     html += `</ul></div>`;
   }
 
-  html += `<div class="row-actions">
+  html += `<div id="validationMsg" class="field-err hidden"></div>
+  <div class="row-actions">
     <button class="link-btn" onclick="location.reload()">Start over</button>
     <button class="primary" id="fillBtn" onclick="runGeneration()">Fill listing</button>
   </div>`;
@@ -392,26 +452,41 @@ function renderForm(){
 
 function onFieldChange(input){ formValues[input.dataset.field] = input.value; checkCanGenerate(); }
 function onStockChange(input){ stockValues[input.dataset.stockRow] = input.value; checkCanGenerate(); }
+function onSizeChange(input){ sizeValues[input.dataset.sizeRow] = input.value; checkCanGenerate(); }
 function applyBulkStock(){
   const v = el('bulkStock').value; if(!v) return;
   analysis.stockRowsNeeded.forEach(({r})=>{
-    stockValues[r]=v;
-    const inp = document.querySelector(`[data-stock-row="${r}"]`);
-    if(inp) inp.value = v;
+    stockValues[r]=v; const inp = document.querySelector(`[data-stock-row="${r}"]`); if(inp) inp.value=v;
   });
   checkCanGenerate();
 }
+
 function checkCanGenerate(){
-  const missingRequired = analysis.fieldsNeedingInput.filter(k=> ["brand","mrp","sellingPrice"].includes(k) && !formValues[k]);
+  const missingRequired = analysis.fieldsNeedingInput.filter(k=> HARD_REQUIRED.includes(k) && !formValues[k]);
   const missingStock = analysis.stockRowsNeeded.some(({r})=> !stockValues[r]);
+  const missingSize = analysis.hasBrandSizeCol && analysis.rows.some(({r})=> !sizeValues[r]);
   const btn = el('fillBtn');
-  if(btn) btn.disabled = missingRequired.length>0 || missingStock;
+  const bad = missingRequired.length>0 || missingStock || missingSize;
+  if(btn) btn.disabled = bad;
+  const msg = el('validationMsg');
+  if(msg){
+    if(bad){
+      const parts = [];
+      if(missingRequired.length) parts.push(missingRequired.map(k=>FIELD_LABELS[k]||k).join(", ") + " still needed");
+      if(missingStock) parts.push("stock still needed for some rows");
+      if(missingSize) parts.push("size still needed for some rows");
+      msg.textContent = parts.join(" · ");
+      msg.classList.remove('hidden');
+    } else msg.classList.add('hidden');
+  }
 }
 
 async function runGeneration(){
   el('formStep').classList.add('hidden');
-  el('spinner').style.display = 'block';
+  el('spinner').style.display='block';
   clearError();
+
+  if(rememberDefaults) saveSavedDefaults(formValues);
 
   const needsContent = forceContent || !analysis.contentAllFilled;
   const hasContentCols = analysis.contentColsPresent.description || analysis.contentColsPresent.searchKeywords || analysis.contentColsPresent.keyFeatures;
@@ -422,14 +497,13 @@ async function runGeneration(){
         category: analysis.sheetName, brand: formValues.brand, color: formValues.color,
         brandColor: formValues.brandColor, fabric: formValues.fabric, fit: formValues.fit,
         pattern: formValues.pattern, idealFor: formValues.idealFor, occasion: formValues.occasion,
-        sizes: analysis.rowSizes.map(s=>s.size).filter(Boolean).join(", "),
+        sizes: Object.values(sizeValues).filter(Boolean).join(", "),
       });
     }catch(e){
       showError("AI content generation didn't come through (" + e.message + "). Continuing without it — you can fill description/keywords manually.");
       aiContent = null;
     }
   }
-
   finalizeAndDownload();
 }
 
@@ -438,7 +512,7 @@ function finalizeAndDownload(){
   const col = analysis.canonicalToCol;
 
   analysis.rows.forEach(({r})=>{
-    const size = (analysis.rowSizes.find(s=>s.r===r)||{}).size || "";
+    const size = sizeValues[r] || (analysis.rowSizes.find(s=>s.r===r)||{}).size || "";
 
     BATCH_FIELD_ORDER.forEach(key=>{
       const c = col[key]; if(c===undefined) return;
@@ -447,6 +521,10 @@ function finalizeAndDownload(){
       setCellVal(ws,r,c, NUMERIC_FIELDS.has(key)?Number(val):val);
     });
 
+    if(col.brandSize!==undefined){
+      const existing = getCellVal(ws,r,col.brandSize);
+      if((existing===""||existing===undefined) && size) setCellVal(ws,r,col.brandSize, size);
+    }
     if(col.stock!==undefined){
       const existing = getCellVal(ws,r,col.stock);
       if((existing===""||existing===undefined) && stockValues[r]) setCellVal(ws,r,col.stock, Number(stockValues[r]));
@@ -458,7 +536,7 @@ function finalizeAndDownload(){
     if(col.groupId!==undefined){
       const existing = getCellVal(ws,r,col.groupId);
       if(existing===""||existing===undefined){
-        const parts=[formValues.brand,formValues.color,formValues.fabric,analysis.sheetName].filter(Boolean).join("-").toUpperCase().replace(/\\s+/g,"-");
+        const parts=[formValues.brand,formValues.color,formValues.fabric,analysis.sheetName].filter(Boolean).join("-").toUpperCase().replace(/\s+/g,"-");
         setCellVal(ws,r,col.groupId, parts || `GROUP-${randomCode()}`);
       }
     }
