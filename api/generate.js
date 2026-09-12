@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   const attrs = req.body || {};
 
-  const prompt = `You are writing an Indian e-commerce (Flipkart) product listing for organic search reach.
+  const prompt = `You are an Indian e-commerce seller writing a Flipkart listing. Your only goal is to match how REAL Indian shoppers actually type into the Flipkart/Google search box - not how a fashion catalogue or export-house buyer would describe the product.
 
 Product attributes:
 ${Object.entries(attrs)
@@ -22,13 +22,29 @@ ${Object.entries(attrs)
   .map(([k, v]) => `- ${k}: ${v}`)
   .join("\n")}
 
-Write:
-1. "description": a persuasive, benefit-focused product description, 90-140 words, plain sentences, no markdown.
-2. "keywords": an array of AS MANY relevant search keyword phrases as you can reasonably generate (aim for 15-25). Use simple, everyday terms the way normal shoppers in India actually type into search boxes - not fancy or formal phrasing. Cover synonyms, use-cases, and related terms to maximize search coverage.
-3. "features": an array of 6-8 short key-feature phrases (2-5 words each).`;
+STRICT RULES FOR KEYWORDS:
+- Never invent vocabulary a normal shopper wouldn't type. BAD examples (never do this): "utility pants", "silhouette", "aesthetic", "streetwear ensemble". GOOD examples for a cargo pant: "cargo pants for women", "cargo pants ladies", "6 pocket pants", "loose fit pants", "cotton cargo pants", "grey cargo pants women", "baggy pants women", "cargo trouser", "casual pants for girls".
+- Cover ALL of these angles, using this exact product's attributes (category, color, fabric, fit, gender) wherever they fit naturally:
+  1. Plain category name + gender (e.g. "cargo pants for women", "cargo pants women")
+  2. Category + color (e.g. "grey cargo pants")
+  3. Category + fabric (e.g. "cotton cargo pants")
+  4. Category + fit/style word a shopper actually uses (e.g. "loose fit cargo", "baggy cargo pants")
+  5. Common misspellings or short forms real shoppers type (e.g. "cargos", "cargo pant" singular)
+  6. Occasion/use-case (e.g. "casual pants", "college wear pants")
+  7. Broader category the shopper might search instead (e.g. "trousers for women", "joggers" if relevant)
+- Produce AT LEAST 20 keyword phrases. Do not stop early. Prioritize quantity of genuinely different, realistic search phrases over cleverness.
+- Every phrase must be something you can picture a real Indian shopper typing verbatim into a search box. If in doubt, make it simpler and more literal, not more "creative."
 
-  // Ask Gemini's native structured-output mode for this shape, rather than
-  // just hoping the model's plain-text reply happens to be clean JSON.
+STRICT RULES FOR DESCRIPTION:
+- Plain, concrete, benefit-first sentences (comfort, fit, occasions to wear it, what to pair it with).
+- No jargon, no "aesthetic", no "silhouette", no "ensemble". Write the way a product listing on Flipkart or Myntra actually reads, not a fashion blog.
+- 90-140 words.
+
+Write:
+1. "description" as described above.
+2. "keywords": an array of at least 20 phrases following the rules above.
+3. "features": an array of 6-8 short, plain key-feature phrases (2-5 words each, e.g. "6 Utility Pockets", "Elastic Waistband", "Machine Washable") - concrete product facts, not marketing adjectives.`;
+
   const responseSchema = {
     type: "OBJECT",
     properties: {
@@ -39,14 +55,13 @@ Write:
     required: ["description", "keywords", "features"],
   };
 
-  // Try models newest-first. Google periodically retires older Flash models
-  // (this list needed updating once already) - if this breaks again, check
-  // https://ai.google.dev/gemini-api/docs/models for the current model name
-  // and add it to the front of this list.
+  // Try models newest-first. Google periodically retires older Flash models.
+  // If this breaks again, check https://ai.google.dev/gemini-api/docs/models
   const MODEL_CANDIDATES = ["gemini-3.8-flash", "gemini-3.6-flash", "gemini-2.5-flash"];
 
   let data = null;
   let lastError = "";
+  let usedModel = "";
 
   for (const model of MODEL_CANDIDATES) {
     try {
@@ -58,8 +73,14 @@ Write:
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 2000,
+              temperature: 0.8,
+              // Gemini 2.5/3.x Flash models "think" before answering, and
+              // those invisible thinking tokens are deducted from
+              // maxOutputTokens FIRST. Capping thinking low and giving a
+              // generous ceiling avoids the budget being eaten before any
+              // JSON is written.
+              maxOutputTokens: 3000,
+              thinkingConfig: { thinkingBudget: 200 },
               responseMimeType: "application/json",
               responseSchema,
             },
@@ -69,6 +90,7 @@ Write:
 
       if (geminiResp.ok) {
         data = await geminiResp.json();
+        usedModel = model;
         break;
       } else {
         lastError = await geminiResp.text();
@@ -83,10 +105,18 @@ Write:
   }
 
   try {
-    const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("\n") || "";
+    const candidate = data?.candidates?.[0];
+    const finishReason = candidate?.finishReason;
+    const text = candidate?.content?.parts?.map((p) => p.text).join("\n") || "";
 
-    // Belt-and-suspenders: even with structured output requested, strip any
-    // stray markdown fences and pull out the {...} block before parsing.
+    if (!text) {
+      return res.status(502).json({
+        error:
+          "Gemini (" + usedModel + ") returned no usable text (finishReason: " +
+          finishReason + "). Try again.",
+      });
+    }
+
     let clean = text.replace(/```json|```/g, "").trim();
     const firstBrace = clean.indexOf("{");
     const lastBrace = clean.lastIndexOf("}");
@@ -99,7 +129,7 @@ Write:
       parsed = JSON.parse(clean);
     } catch (e) {
       return res.status(502).json({
-        error: "Could not parse AI response as JSON.",
+        error: "Could not parse AI response as JSON (finishReason: " + finishReason + ").",
         raw: text.slice(0, 500),
       });
     }
@@ -108,6 +138,14 @@ Write:
       return res.status(502).json({
         error: "AI response was missing description/keywords/features.",
         raw: text.slice(0, 500),
+      });
+    }
+
+    // Hard floor: if the model still under-delivered on keyword count,
+    // fail loudly rather than silently shipping a thin list.
+    if (parsed.keywords.length < 12) {
+      return res.status(502).json({
+        error: "AI generated too few keywords (" + parsed.keywords.length + "). Try again.",
       });
     }
 
