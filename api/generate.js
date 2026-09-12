@@ -1,6 +1,6 @@
 // Vercel Serverless Function
 // Keeps the Gemini API key on the server - never exposed to the browser.
-// Set GEMINI_API_KEY in Vercel Project Settings -> Environment Variables.
+// Set GEMINI_API_KEY in Vercel via: vercel env add GEMINI_API_KEY production
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
