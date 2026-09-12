@@ -30,27 +30,46 @@ Write:
 Respond with ONLY raw JSON, no markdown code fences, no preamble, in exactly this shape:
 {"description": "...", "keywords": ["...", "..."], "features": ["...", "..."]}`;
 
-  try {
-    const geminiResp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 1500 },
-        }),
+  // Try models newest-first. Google periodically retires older Flash models
+  // (this list needed updating once already) - if this breaks again, check
+  // https://ai.google.dev/gemini-api/docs/models for the current model name
+  // and add it to the front of this list.
+  const MODEL_CANDIDATES = ["gemini-3.8-flash", "gemini-3.6-flash", "gemini-2.5-flash"];
+
+  let data = null;
+  let lastError = "";
+
+  for (const model of MODEL_CANDIDATES) {
+    try {
+      const geminiResp = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.7, maxOutputTokens: 1500 },
+          }),
+        }
+      );
+
+      if (geminiResp.ok) {
+        data = await geminiResp.json();
+        break;
+      } else {
+        lastError = await geminiResp.text();
       }
-    );
-
-    if (!geminiResp.ok) {
-      const errText = await geminiResp.text();
-      return res.status(502).json({ error: "Gemini API error: " + errText.slice(0, 300) });
+    } catch (e) {
+      lastError = e.message;
     }
+  }
 
-    const data = await geminiResp.json();
-    const text =
-      data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("\n") || "";
+  if (!data) {
+    return res.status(502).json({ error: "Gemini API error: " + lastError.slice(0, 300) });
+  }
+
+  try {
+    const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("\n") || "";
     const clean = text.replace(/```json|```/g, "").trim();
 
     let parsed;
