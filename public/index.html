@@ -191,10 +191,18 @@ function saveSavedDefaults(values){
 function detectMainSheet(wb){
   return wb.SheetNames.find(n => !HELPER_SHEETS.has(n) && !/^DropDownValuesForColumn/i.test(n) && n !== "template_version");
 }
+// Build a single flat list of {key, synonym} pairs and sort by synonym
+// length descending, so "brand size" is always tested before "brand" -
+// this replaces a fragile hand-ordered field list, which is exactly how
+// "Brand Size" and "Brand Color" both got silently misread as plain
+// "Brand" (both contain "brand" as a substring, checked first before).
+const ALL_SYNONYM_PAIRS = Object.entries(FIELD_SYNONYMS)
+  .flatMap(([key, syns]) => syns.map((s) => ({ key, syn: s })))
+  .sort((a, b) => b.syn.length - a.syn.length);
+
 function matchHeader(normalizedText){
-  for(const key of FIELD_MATCH_ORDER){
-    const syns = FIELD_SYNONYMS[key];
-    if(syns.some(s => normalizedText.includes(s))) return key;
+  for(const {key, syn} of ALL_SYNONYM_PAIRS){
+    if(normalizedText.includes(syn)) return key;
   }
   return null;
 }
