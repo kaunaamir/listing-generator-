@@ -182,7 +182,7 @@
   </div>
 </div>
 
-<div class="label-tag">Made by Aamir<span class="stitch">build 2026-09-13d</span></div>
+<div class="label-tag">Made by Aamir<span class="stitch">build 2026-09-13e</span></div>
 
 <script>
 /* ---------------- template knowledge ---------------- */
@@ -715,17 +715,25 @@ function finalizeAndDownload(){
       if(existing===""||existing===undefined) setCellVal(ws,r,col.listingStatus,"Active");
     }
     if(aiContent){
+      // Picking a hardcoded category (Cargo/Sharara) is a deliberate,
+      // explicit choice to use that written content - it should always
+      // win over whatever was already in the cell (old AI junk, a stale
+      // value from a previous attempt, etc). Only the AI-fallback path
+      // (no category selected) respects "don't overwrite unless empty",
+      // since that content is a guess rather than an explicit choice.
+      const isExplicitContent = selectedCategory && CATEGORY_CONTENT[selectedCategory];
+      const shouldOverwrite = forceContent || isExplicitContent;
       if(col.description!==undefined){
         const existing = getCellVal(ws,r,col.description);
-        if(forceContent||existing===""||existing===undefined) setCellVal(ws,r,col.description, aiContent.description);
+        if(shouldOverwrite||existing===""||existing===undefined) setCellVal(ws,r,col.description, aiContent.description);
       }
       if(col.searchKeywords!==undefined){
         const existing = getCellVal(ws,r,col.searchKeywords);
-        if(forceContent||existing===""||existing===undefined) setCellVal(ws,r,col.searchKeywords, (aiContent.keywords||[]).join("::"));
+        if(shouldOverwrite||existing===""||existing===undefined) setCellVal(ws,r,col.searchKeywords, (aiContent.keywords||[]).join("::"));
       }
       if(col.keyFeatures!==undefined){
         const existing = getCellVal(ws,r,col.keyFeatures);
-        if(forceContent||existing===""||existing===undefined) setCellVal(ws,r,col.keyFeatures, (aiContent.features||[]).join("::"));
+        if(shouldOverwrite||existing===""||existing===undefined) setCellVal(ws,r,col.keyFeatures, (aiContent.features||[]).join("::"));
       }
     }
   });
