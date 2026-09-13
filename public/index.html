@@ -70,7 +70,7 @@
     </div>
   </div>
 
-  <footer>Runs entirely on this device — nothing leaves your browser except the description/keyword request.<br/>Made by Aamir.</footer>
+  <footer>Runs entirely on this device — nothing leaves your browser except the description/keyword request.<br/>Made by Aamir. <span style="opacity:0.5;">(build 2026-09-13c)</span></footer>
 </div>
 
 <script>
@@ -135,6 +135,8 @@ const BATCH_FIELD_ORDER = ["brand","mrp","sellingPrice","fabric","idealFor","fit
   "countryOfOrigin","manufacturer","packer","hsn","taxCode","fabricCare","itemsIncluded","occasion",
   "length","breadth","height","weight","luxuryCess","minOQ","procurementSla","listingStatus","fulfilmentBy",
   "procurementType","shippingProvider"];
+// brandSizeUnit is handled separately (written alongside Brand Size per
+// row, not asked as a batch field) - see finalizeAndDownload.
 
 // fields we DEMAND a value for before allowing download - a silent gap here
 // is how the last version shipped a file with blank MRP/price/dimensions.
@@ -237,12 +239,29 @@ function parseIndexOptions(wb){
   }
   return options;
 }
+// Flipkart templates commonly insert a few instruction/hint rows right
+// after the header row before real data starts (e.g. "Text - limited to
+// 64 characters...", a blank spacer row, then a longer explanatory
+// paragraph) - these are NOT product rows and must be skipped, or they
+// get treated as a fake row-1 product with garbage as its "SKU".
+// Heuristic: a genuine Seller SKU ID is short (no spaces beyond a couple)
+// and doesn't read like a sentence; hint text is long and sentence-like.
+function looksLikeRealSku(text){
+  const s = String(text).trim();
+  if(!s) return false;
+  if(s.length > 40) return false;           // hint paragraphs are long
+  if(/[.]{1}\s/.test(s)) return false;        // sentences have ". " mid-string
+  if(/\s{2,}/.test(s)) return false;          // hint text often has run-on spacing
+  const wordCount = s.split(/\s+/).length;
+  if(wordCount > 4) return false;            // real SKUs are short tokens/slugs
+  return true;
+}
 function extractRows(ws, canonicalToCol){
   const skuCol = canonicalToCol.sellerSku; if(skuCol===undefined) return [];
   const range = XLSX.utils.decode_range(ws['!ref']); const rows = [];
   for(let r=range.s.r+1;r<=range.e.r;r++){
     const sku = getCellVal(ws,r,skuCol);
-    if(sku!==""&&sku!==undefined) rows.push({r, sku:String(sku)});
+    if(sku!==""&&sku!==undefined && looksLikeRealSku(sku)) rows.push({r, sku:String(sku)});
   }
   return rows;
 }
@@ -532,6 +551,19 @@ function finalizeAndDownload(){
     if(col.brandSize!==undefined){
       const existing = getCellVal(ws,r,col.brandSize);
       if((existing===""||existing===undefined) && size) setCellVal(ws,r,col.brandSize, size);
+    }
+    // Flipkart requires Brand Size to carry a "qualifier" (Regular/US/UK/
+    // Euro/Number) in a separate column - without it, even a valid size
+    // like "M" is rejected. Alpha sizes (S/M/L/XL/XXL/3XL etc) always use
+    // "Regular"; numeric sizes would need US/UK/Euro/Number instead, which
+    // this tool doesn't yet ask about since none of the files so far have
+    // used numeric sizing.
+    if(col.brandSizeUnit!==undefined){
+      const existingUnit = getCellVal(ws,r,col.brandSizeUnit);
+      if(existingUnit===""||existingUnit===undefined){
+        const isAlpha = /^(XXS|XS|S|M|L|XL|XXL|3XL|4XL|5XL|6XL|7XL|Free)$/i.test(String(size).trim());
+        setCellVal(ws,r,col.brandSizeUnit, isAlpha ? "Regular" : "Regular");
+      }
     }
     if(col.stock!==undefined){
       const existing = getCellVal(ws,r,col.stock);
