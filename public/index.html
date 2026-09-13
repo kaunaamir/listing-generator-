@@ -182,7 +182,7 @@
   </div>
 </div>
 
-<div class="label-tag">Made by Aamir<span class="stitch">build 2026-09-13e</span></div>
+<div class="label-tag">Made by Aamir<span class="stitch">build 2026-09-13f</span></div>
 
 <script>
 /* ---------------- template knowledge ---------------- */
@@ -642,7 +642,14 @@ async function runGeneration(){
   if(rememberDefaults) saveSavedDefaults(formValues);
 
   const hasContentCols = analysis.contentColsPresent.description || analysis.contentColsPresent.searchKeywords || analysis.contentColsPresent.keyFeatures;
-  const needsContent = forceContent || !analysis.contentAllFilled;
+  // Picking a hardcoded category (Cargo/Sharara) is explicit intent to use
+  // that written content - it must run regardless of whether the file's
+  // content columns already had something in them. The "skip if already
+  // filled" shortcut only makes sense for the AI-fallback path, where
+  // there is no explicit instruction and leaving existing content alone
+  // is the safer default.
+  const isExplicitCategory = selectedCategory && CATEGORY_CONTENT[selectedCategory];
+  const needsContent = forceContent || isExplicitCategory || !analysis.contentAllFilled;
 
   if(needsContent && hasContentCols){
     if(selectedCategory && CATEGORY_CONTENT[selectedCategory]){
