@@ -182,7 +182,7 @@
   </div>
 </div>
 
-<div class="label-tag">Made by Aamir<span class="stitch">build 2026-09-13f</span></div>
+<div class="label-tag">Made by Aamir<span class="stitch">build 2026-09-13g</span></div>
 
 <script>
 /* ---------------- template knowledge ---------------- */
@@ -750,7 +750,7 @@ function finalizeAndDownload(){
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   const base = fileName.replace(/\.(xls|xlsx)$/i,"");
-  a.href = url; a.download = `${base}_FILLED.xlsx`;
+  a.href = url; a.download = `${base}.xlsx`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 
